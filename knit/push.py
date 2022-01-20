@@ -26,6 +26,7 @@ def push(work_dir: Path, I: Inputs):
 
     run(["rm", "-rf", work_dir.absolute() / ".git"])
     git("init")
+    git("checkout", "--orphan", I.branch)
     git("remote", "add", "origin", remote_from_token(I))
 
     git("add", "--all")
@@ -39,12 +40,7 @@ def push(work_dir: Path, I: Inputs):
 
     print(f'Commited: "{message}"')
 
-    git("branch", I.branch)
-
-    git("checkout", I.branch)
-
     print(blue | "Add remote, and stage files")
 
     git("push", "origin", "--force", I.branch)
-
     print(green | f"Pushed.")
