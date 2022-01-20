@@ -24,20 +24,8 @@ def push(work_dir: Path, I: Inputs):
 
     print(blue | f"Configure repository to push to {I.branch}")
 
-    if I.keep_files == True:
-        git("remote", "rm", "origin")
-
-    if I.force_orphan:
-        run(["rm", "-rf", work_dir.absolute() / ".git"])
-        git("init")
-
-    if git("show-ref", "-q", "--heads").returncode != 0:
-        git("branch", I.branch)
-
-    git("checkout", I.branch)
-
-    print(blue | "Add remote, and stage files")
-
+    run(["rm", "-rf", work_dir.absolute() / ".git"])
+    git("init")
     git("remote", "add", "origin", remote_from_token(I))
 
     git("add", "--all")
@@ -46,13 +34,17 @@ def push(work_dir: Path, I: Inputs):
     git("config", "user.email", I.email)
 
     message = I.commit_message.replace("!#!", environ["GITHUB_SHA"])
+
     git("commit", "-m", message)
 
     print(f'Commited: "{message}"')
 
-    if I.force_orphan:
-        git("push", "origin", "--force", I.branch)
-    else:
-        git("push", "origin", I.branch)
+    git("branch", I.branch)
+
+    git("checkout", I.branch)
+
+    print(blue | "Add remote, and stage files")
+
+    git("push", "origin", "--force", I.branch)
 
     print(green | f"Pushed.")
