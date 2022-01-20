@@ -22,7 +22,7 @@ def push(work_dir: Path, I: Inputs):
     def git(*args):
         return run(["git", *args], cwd=work_dir)
 
-    print(blue | f"Configure repository to push to {I.branch}")
+    print(blue | f"Configuring repository to push to {I.branch}")
 
     run(["rm", "-rf", work_dir.absolute() / ".git"])
     git("init")
